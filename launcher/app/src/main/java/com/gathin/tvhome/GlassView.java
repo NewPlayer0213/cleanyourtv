@@ -29,6 +29,8 @@ public class GlassView extends View {
     /** glass_style rim or halo: no sheen and no fill, only the crisp rim (and, for halo, a lighter outer glow). */
     private boolean flat;
     private boolean halo;
+    /** glass_haze: how much of the sheen and specular shows, 100 for the full glass, less for a clearer slab. */
+    private int hazePercent = 100;
 
     public GlassView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -69,6 +71,12 @@ public class GlassView extends View {
         invalidate();
     }
 
+    void setHaze(int percent) {
+        hazePercent = percent;
+        if (getHeight() > 0) shade(getHeight());
+        invalidate();
+    }
+
     void setRadius(float px) {
         radius = px;
         invalidate();
@@ -77,8 +85,17 @@ public class GlassView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        fill.setShader(new LinearGradient(0, 0, 0, h, 0x3DFFFFFF, 0x12FFFFFF, Shader.TileMode.CLAMP));
-        specular.setShader(new LinearGradient(0, 0, 0, h * 0.45f, 0x66FFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
+        shade(h);
+    }
+
+    private void shade(int h) {
+        fill.setShader(new LinearGradient(0, 0, 0, h, haze(0x3D), haze(0x12), Shader.TileMode.CLAMP));
+        specular.setShader(new LinearGradient(0, 0, 0, h * 0.45f, haze(0x66), 0x00FFFFFF, Shader.TileMode.CLAMP));
+    }
+
+    /** White at the given alpha, scaled by glass_haze. */
+    private int haze(int alpha) {
+        return (Math.round(alpha * hazePercent / 100f) << 24) | 0xFFFFFF;
     }
 
     @Override
