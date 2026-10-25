@@ -37,5 +37,3 @@ these keys added to its `config.json`:
 ```
 
 The `app_keys` keycodes are the ones my remote sends; read yours with `getevent` first.
-
-Issues for this fork go to [NewPlayer0213/cleanyourtv](https://github.com/NewPlayer0213/cleanyourtv/issues).
