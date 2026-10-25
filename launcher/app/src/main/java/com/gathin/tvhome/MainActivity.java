@@ -73,7 +73,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.dynamicanimation.animation.FloatPropertyCompat;
 import androidx.dynamicanimation.animation.SpringAnimation;
-import androidx.dynamicanimation.animation.SpringForce;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -287,6 +286,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private boolean libraryHomeTiles;
     private boolean uniformTiles;
     private Map<String, String> appBanners;
+    private int glassHaze;
     private boolean libraryFocusPending;
     private RecyclerView.OnScrollListener pendingFocusScroll;
 
@@ -385,6 +385,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         libraryHomeTiles = cfg.libraryHomeTiles;
         uniformTiles = cfg.uniformTiles;
         appBanners = cfg.appBanners;
+        glassHaze = cfg.glassHaze;
         // restore_key_services: after a force stop, put back the remote's accessibility helpers that Android took
         // off the list (needs WRITE_SECURE_SETTINGS, granted by build-and-install with RESTORE_KEY_SERVICES=1).
         if (cfg.restoreKeyServices) ServiceRepair.restore(this);
@@ -427,7 +428,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         sky.setIntensity(cfg.skyIntensity);
         glass = findViewById(R.id.glass);
         glass.setStyle(cfg.glassStyle);
-        glass.setHaze(cfg.glassHaze);
+        glass.setHaze(glassHaze);
         if (festive) glass.setAccent(festival.accentColor());
         ambient = findViewById(R.id.ambient);
         // The glow is one bitmap, so its alpha can be applied while drawing it. Otherwise every frame of
@@ -1570,7 +1571,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         libraryFocusPending = false;
         libraryFromTopBar = false;
         appLibrary = new AppLibraryDialog(this, animations, reducedMotion, appLibrarySelection, libraryOkOpens,
-                libraryHomeTiles, uniformTiles, advancedEffects, focusOvershoot, appBanners, adapter::containsPackage, () -> reloadApps(false), () -> {
+                libraryHomeTiles, uniformTiles, advancedEffects, focusOvershoot, appBanners, glassHaze, adapter::containsPackage, () -> reloadApps(false), () -> {
             appLibrary = null;
             openPopup = null;
             if (libraryFromTopBar) {

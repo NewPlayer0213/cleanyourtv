@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Banner for the Settings tile (app_banners): one flat dark field with the gear, instead of the system app's split banner. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:width="320dp" android:height="180dp">
+        <shape android:shape="rectangle"><solid android:color="#FF2C2C30" /></shape>
+    </item>
+    <item android:width="72dp" android:height="72dp" android:gravity="center"
+        android:drawable="@drawable/ic_settings" />
+</layer-list>

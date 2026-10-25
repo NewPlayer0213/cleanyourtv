@@ -32,7 +32,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.dynamicanimation.animation.FloatPropertyCompat;
 import androidx.dynamicanimation.animation.SpringAnimation;
-import androidx.dynamicanimation.animation.SpringForce;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -94,6 +93,8 @@ final class AppLibraryDialog {
     private final boolean focusOvershoot;
     /** app_banners, so a tile shows the same banner as on Home. */
     private final Map<String, String> appBanners;
+    /** glass_haze, so the library's glass matches Home's. */
+    private final int glassHaze;
     private final boolean rtl;
     private TextView instructions;
     private int totalApps;
@@ -162,7 +163,7 @@ final class AppLibraryDialog {
     }
 
     AppLibraryDialog(Activity activity, boolean animations, boolean reducedMotion, boolean selectionMode, boolean okOpens,
-                     boolean homeTiles, boolean uniformTiles, boolean advancedEffects, boolean focusOvershoot, Map<String, String> appBanners,
+                     boolean homeTiles, boolean uniformTiles, boolean advancedEffects, boolean focusOvershoot, Map<String, String> appBanners, int glassHaze,
                      Predicate<String> onHome, Runnable changed, Runnable dismissed) {
         this.activity = activity;
         this.animations = animations;
@@ -171,6 +172,7 @@ final class AppLibraryDialog {
         this.advancedEffects = advancedEffects;
         this.focusOvershoot = focusOvershoot;
         this.appBanners = appBanners;
+        this.glassHaze = glassHaze;
         this.rtl = activity.getResources().getBoolean(R.bool.rtl_app_grid);
         this.reducedMotion = reducedMotion;
         this.selectionMode = selectionMode;
@@ -453,6 +455,7 @@ final class AppLibraryDialog {
         shelf.addView(list, new FrameLayout.LayoutParams(-1, -1));
         highlight = new GlassView(activity, null);
         highlight.setRadius(dp(20));
+        highlight.setHaze(glassHaze);
         highlight.setAlpha(0f);
         highlight.setFocusable(false);
         highlight.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
@@ -462,8 +465,7 @@ final class AppLibraryDialog {
             @Override public float getValue(View view) { return view.getTranslationX() + scrollOffset; }
             @Override public void setValue(View view, float value) { view.setTranslationX(value - scrollOffset); }
         });
-        if (reducedMotion) Motion.reduce(spring);
-        else spring.setSpring(new SpringForce().setStiffness(260f).setDampingRatio(0.58f));
+        Motion.focus(spring, reducedMotion, focusOvershoot, advancedEffects);
         list.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override public void onScrolled(@NonNull RecyclerView rv, int dx, int dy) {
                 scrollOffset += dx;
